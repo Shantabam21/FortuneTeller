@@ -1,5 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.util.Random;
 
 public class FortuneTellerFrame extends JFrame {
     JPanel mainPnl;
@@ -10,24 +13,47 @@ public class FortuneTellerFrame extends JFrame {
     JLabel titleLbl;
     ImageIcon icon = new ImageIcon("src/photo.jpg");
     Image originalImg = icon.getImage();
-    Image scaleImg = originalImg.getScaledInstance(550, 350, Image.SCALE_SMOOTH);
+    Image scaleImg = originalImg.getScaledInstance(300, 250, Image.SCALE_SMOOTH);
     ImageIcon scaleIcon = new ImageIcon(scaleImg);
 
+    TextArea displayTA;
+    JScrollPane scrollPane;
 
+    JButton readFortuneBtn = new  JButton("Read My Fortune!");
     JButton quitBtn = new JButton("Quit");
+    String[] fortunes = {"You will have a great day!",
+                         "You will have a great weekend!",
+                         "You will have a great month!",
+                         "You will have a great year!",
+                         "You will have a great life!",
+                         "You will get to fish one day!",
+                         "You will have a great life!",
+                         "Try harder!",
+                         "You will find a stable job!",
+                         "You can do it",
+                         "There is nothing that you can't do",
+                         "Challenge is just a chance for you to grow",
+                        };
+
+    Random rand = new Random();
+    int curIdx = -1;
 
     public FortuneTellerFrame() {
+        super("Fortune Teller");
         mainPnl = new JPanel();
         mainPnl.setLayout(new BorderLayout());
 
+        Toolkit toolkit = Toolkit.getDefaultToolkit();
+        Dimension dimension = toolkit.getScreenSize();
+        int width = (int) dimension.getWidth() * 3/4;
+        int height = (int) dimension.getHeight() * 3/4;
 
         createTopPanel();
-        mainPnl.add(topPnl, BorderLayout.NORTH);
-        add(mainPnl);
-        setSize(400,400);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
 
+        createCenterPanel();
+
+        createBottomPanel();
+        add(mainPnl);
     }
 
     public void createTopPanel() {
@@ -40,6 +66,38 @@ public class FortuneTellerFrame extends JFrame {
 
 
          topPnl.add(titleLbl);
+        mainPnl.add(topPnl, BorderLayout.NORTH);
+    }
+
+    public void createCenterPanel() {
+        centerPnl = new JPanel();
+        displayTA = new TextArea(15,30);
+        scrollPane = new JScrollPane(displayTA);
+        displayTA.setEditable(false);
+        centerPnl.add(scrollPane);
+        mainPnl.add(centerPnl, BorderLayout.CENTER);
+    }
+
+    public void createBottomPanel() {
+        bottomPnl = new JPanel();
+        bottomPnl.setLayout(new GridLayout(1,2));
+
+        readFortuneBtn.addActionListener((ActionEvent ae) -> {
+            int newIdx = -1;
+            do {
+                newIdx = rand.nextInt(fortunes.length);
+
+            } while (newIdx == curIdx);
+
+            displayTA.append(fortunes[newIdx] + "\n");
+            curIdx = newIdx;
+        });
+        quitBtn.addActionListener((ActionEvent ae) -> System.exit(0));
+        bottomPnl.add(readFortuneBtn);
+        bottomPnl.add(quitBtn);
+
+        mainPnl.add(bottomPnl, BorderLayout.SOUTH);
+
     }
 
 }
